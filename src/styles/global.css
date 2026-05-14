@@ -12,7 +12,18 @@
    }
 
    :root {
+       color-scheme: light;
        --col-w: 540px;
+       --bg: #f3f6f9;
+       --fg: #2c3340;
+       --muted: #8a93a3;
+       --line: #dde2e9;
+       --hl: #e7ecf2;
+       --accent: #5e6b80;
+       --mist-rgb: 46, 55, 72;
+       --particle: #7a8595;
+       --code-bg: #e9edf3;
+       --code-fg: #3b4350;
    }
 
    /* palettes */
@@ -86,6 +97,10 @@
        --para-gap: 1.45rem;
    }
 
+   html {
+       background: var(--bg);
+   }
+
    body {
        font-family: var(--font-body);
        background: var(--bg);
@@ -117,7 +132,7 @@
    }
 
    .has-mist .bg-mist {
-       opacity: .3;
+       opacity: .6;
    }
 
    @keyframes drift {
