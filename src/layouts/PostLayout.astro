@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import { siteConfig } from "../site.config";
 
 const { frontmatter } = Astro.props;
 
@@ -29,5 +30,13 @@ function formatDate(date: string | Date) {
         <a href="/">index</a>
       </div>
     </div>
+
+    {siteConfig.home.showHint && (
+      <div class="home-hint">
+        <span class="kbd">esc</span> back &nbsp;·&nbsp;
+        <span class="kbd">j</span><span class="kbd">k</span> scroll &nbsp;·&nbsp;
+        <span class="kbd">/</span> search
+      </div>
+    )}
   </main>
 </BaseLayout>
