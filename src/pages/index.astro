@@ -1,17 +1,66 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../site.config";
 
+const posts = Object.entries(import.meta.glob("./blog/*.md", { eager: true }))
+	.map(([path, post]) => {
+		const slug = path.replace("./blog/", "").replace(".md", "");
+
+		return {
+			slug,
+			title: post.frontmatter.title,
+			date: post.frontmatter.date,
+		};
+	})
+	.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+function formatDate(date: string | Date) {
+	const d = new Date(date);
+	return d
+		.toLocaleDateString("en", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		})
+		.toLowerCase();
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="home">
+	<main class="home fade-enter">
+		{siteConfig.home.showMark && <div class="home-mark">·</div>}
+
+		{
+			siteConfig.home.showTagline && siteConfig.home.tagline && (
+				<div class="home-tagline">{siteConfig.home.tagline}</div>
+			)
+		}
+
+		<ul class="post-list" role="list">
+			{
+				posts.map((post, index) => (
+					<li class:list={["post-item", { focused: index === 0 }]}>
+						<a href={`/blog/${post.slug}/`} data-post-link>
+							<div class="pt">{post.title}</div>
+							<div class="pd">{formatDate(post.date)}</div>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+
+		<div class="home-foot">
+			<a href="/rss.xml">rss</a>
+			<span>·</span>
+			<button type="button" data-search-open>search</button>
+		</div>
+
+		{
+			siteConfig.home.showHint && (
+				<div class="home-hint">
+					<span class="kbd">click</span> open
+				</div>
+			)
+		}
+	</main>
+</BaseLayout>

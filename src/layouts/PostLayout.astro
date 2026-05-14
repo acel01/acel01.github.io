@@ -1,0 +1,33 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+const { frontmatter } = Astro.props;
+
+function formatDate(date: string | Date) {
+  const d = new Date(date);
+  return d.toLocaleDateString("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).toLowerCase();
+}
+---
+
+<BaseLayout title={frontmatter.title}>
+  <main class="reader fade-enter">
+    <div class="reader-inner">
+      <a class="back-link" href="/">← back</a>
+
+      <h1>{frontmatter.title}</h1>
+      <span class="date">{formatDate(frontmatter.date)}</span>
+
+      <article class="body">
+        <slot />
+      </article>
+
+      <div class="reader-foot">
+        <a href="/">index</a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

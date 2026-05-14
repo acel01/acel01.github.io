@@ -1,0 +1,77 @@
+---
+import "../styles/global.css";
+import { siteConfig } from "../site.config";
+
+const { title = "blog" } = Astro.props;
+
+const searchPosts = Object.entries(import.meta.glob("../pages/blog/*.md", { eager: true }))
+    .map(([path, post]) => {
+        const slug = path.split("/").pop()?.replace(".md", "");
+        return {
+            title: post.frontmatter.title,
+            date: post.frontmatter.date,
+            url: `/blog/${slug}/`,
+        };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+const effectsClass = [
+    siteConfig.effects.mist ? "has-mist" : "",
+    siteConfig.effects.grain ? "has-grain" : "",
+    siteConfig.effects.snow ? "has-snow" : "",
+]
+    .filter(Boolean)
+    .join(" ");
+---
+
+<!doctype html>
+<html
+    lang="en"
+    data-palette={siteConfig.palette}
+    data-font="serif-mono"
+    data-density="airy"
+>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>{title}</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+
+    <body class={effectsClass}>
+        <div class="bg-mist"></div>
+        <div class="bg-grain"></div>
+
+        {siteConfig.effects.snow && <canvas class="bg-canvas" id="snow" />}
+
+        <slot />
+
+        <div class="search-back" id="search" hidden>
+            <div class="search-box" role="dialog" aria-modal="true" aria-label="Search posts">
+                <input
+                    class="search-input"
+                    id="search-input"
+                    placeholder="search…"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+                <ul class="search-results" id="search-results" role="list"></ul>
+                <div class="search-hint">
+                    <span class="kbd">↑</span><span class="kbd">↓</span> nav &nbsp;·&nbsp;
+                    <span class="kbd">⏎</span> open &nbsp;·&nbsp;
+                    <span class="kbd">esc</span> close
+                </div>
+            </div>
+        </div>
+
+        <script is:inline set:html={`window.__POSTS__ = ${JSON.stringify(searchPosts)};`} />
+        <script is:inline src="/site-nav.js"></script>
+        {siteConfig.effects.snow && <script is:inline src="/snow.js"></script>}
+    </body>
+</html>
